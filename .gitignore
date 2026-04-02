@@ -1,0 +1,16 @@
+# Environment Variables
+.env
+
+# Python Virtual Environment
+venv/
+env/
+
+# Python Cache
+__pycache__/
+*.pyc
+
+# Database
+db.sqlite3
+
+# Static files (if collected)
+staticfiles/
