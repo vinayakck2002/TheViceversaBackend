@@ -12,7 +12,6 @@ https://docs.djangoproject.com/en/6.0/ref/settings/
 
 from pathlib import Path
 import os
-from pathlib import Path
 from dotenv import load_dotenv # Ithu add cheyyuka
 
 # Load environment variables
@@ -39,7 +38,7 @@ SECRET_KEY = 'django-insecure-t%%u4qvl7y=nmg6h9!*ku4_0wpy*z!7ypazb$vi@m93m5--1+w
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['viceversa.pythonanywhere.com', '127.0.0.1', 'localhost']
 
 
 # Application definition
