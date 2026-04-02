@@ -22,8 +22,9 @@ load_dotenv()
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
-# Ettavum thazhe aayi ithu kodukkuka
+# Environment variables
 GOOGLE_CLIENT_ID = os.environ.get('GOOGLE_CLIENT_ID')
+ALLOWED_ADMIN_EMAIL = os.environ.get('ALLOWED_ADMIN_EMAIL')
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -134,7 +135,9 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
 
-STATIC_URL = 'static/'
+STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+
 
 
 
