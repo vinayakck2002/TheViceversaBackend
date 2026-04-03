@@ -145,7 +145,13 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",
     "http://127.0.0.1:5173 ",
+    "https://theviceversa.netlify.app",
 
+]
+# CSRF errors varathirikkan ithum koodi add cheyyam
+CSRF_TRUSTED_ORIGINS = [
+    "https://theviceversa.netlify.app",
+    "https://viceversa.pythonanywhere.com",
 ]
 
 # Cookie frontend-lekku pass aakan ithu True aakanam
