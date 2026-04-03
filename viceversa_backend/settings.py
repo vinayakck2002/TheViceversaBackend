@@ -88,6 +88,7 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'viceversa_backend.wsgi.application'
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
 # Database
