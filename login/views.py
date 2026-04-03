@@ -5,6 +5,8 @@ from google.oauth2 import id_token
 from google.auth.transport import requests as google_requests
 from django.contrib.auth.models import User
 from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework_simplejwt.exceptions import InvalidToken, TokenError
+import jwt
 from django.conf import settings
 from django.contrib.auth import authenticate
 
@@ -79,6 +81,40 @@ class StandardLoginView(APIView):
             return response
         else:
             return Response({"error": "Invalid Email or Password"}, status=status.HTTP_401_UNAUTHORIZED)
+        
+
+class CookieTokenRefreshView(APIView):
+    def post(self, request):
+        # Cookie-il ninnu refresh token edukkunnu
+        refresh_token = request.COOKIES.get('refresh_token')
+
+        if not refresh_token:
+            return Response({"error": "Refresh token not found"}, status=status.HTTP_401_UNAUTHORIZED)
+
+        try:
+            # Token verify cheyyunnu
+            refresh = RefreshToken(refresh_token)
+            
+            # Puthiya access token undakkunnu
+            new_access_token = str(refresh.access_token)
+
+            response = Response({"message": "Token refreshed successfully"}, status=status.HTTP_200_OK)
+            
+            # Puthiya access token veendum cookie aayi set cheyyunnu
+            is_production = not settings.DEBUG
+            response.set_cookie(
+                key='access_token', 
+                value=new_access_token, 
+                httponly=True, 
+                secure=is_production, 
+                samesite='Lax', 
+                max_age=3600
+            )
+
+            return response
+
+        except TokenError as e:
+            return Response({"error": "Invalid or expired refresh token"}, status=status.HTTP_401_UNAUTHORIZED)
 
 
 class LogoutView(APIView):
