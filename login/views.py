@@ -39,8 +39,8 @@ class GoogleLoginView(APIView):
             
             response = Response(response_data, status=status.HTTP_200_OK)
             
-            response.set_cookie(key='access_token', value=str(refresh.access_token), httponly=True, secure=True, samesite='Lax', max_age=3600)
-            response.set_cookie(key='refresh_token', value=str(refresh), httponly=True, secure=True, samesite='Lax', max_age=86400 * 7)
+            response.set_cookie(key='access_token', value=str(refresh.access_token), httponly=True, secure=False, samesite='Lax', max_age=3600)
+            response.set_cookie(key='refresh_token', value=str(refresh), httponly=True, secure=False, samesite='Lax', max_age=86400 * 7)
             
             return response
             
