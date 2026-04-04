@@ -13,7 +13,7 @@ https://docs.djangoproject.com/en/6.0/ref/settings/
 from pathlib import Path
 import os
 from dotenv import load_dotenv # Ithu add cheyyuka
-
+from datetime import timedelta
 # Load environment variables
 load_dotenv()
 
@@ -144,7 +144,10 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
-
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=60), # Ithu 60 aakkuka
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=7),
+}
 
 # CORS Settings for React Frontend
 CORS_ALLOWED_ORIGINS = [
