@@ -88,6 +88,7 @@ class StandardLoginView(APIView):
         
 
 class CookieTokenRefreshView(APIView):
+    permission_classes = [AllowAny]
     def post(self, request):
         # Cookie-il ninnu refresh token edukkunnu
         refresh_token = request.COOKIES.get('refresh_token')
