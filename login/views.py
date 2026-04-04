@@ -54,77 +54,85 @@ class GoogleLoginView(APIView):
 
 class StandardLoginView(APIView):
     permission_classes = [AllowAny]
+
     def post(self, request):
         email = request.data.get('email')
         password = request.data.get('password')
 
-        # --- VIP SECURITY CHECK ---
         if email != settings.ALLOWED_ADMIN_EMAIL:
-            return Response({"error": "Access Denied. Only Admin can login."}, status=status.HTTP_403_FORBIDDEN)
-        # --------------------------
+            return Response({"error": "Access Denied"}, status=403)
 
         user = authenticate(username=email, password=password)
 
-        if user is not None:
+        if user:
             refresh = RefreshToken.for_user(user)
 
-            # Response Data - Email mathram!
-            response_data = {
+            response = Response({
                 "message": "Login Successful",
-                "user": {
-                    "email": user.email
-                }
-            }
+                "user": {"email": user.email}
+            })
 
-            response = Response(response_data, status=status.HTTP_200_OK)
+            # ✅ Cookie FIX
+            response.set_cookie(
+                'access_token',
+                str(refresh.access_token),
+                httponly=True,
+                secure=True,
+                samesite='None',
+                max_age=3600
+            )
 
-            # samesite='None' & secure=True
-            response.set_cookie(key='access_token', value=str(refresh.access_token), httponly=True, secure=True, samesite='None', max_age=3600)
-            response.set_cookie(key='refresh_token', value=str(refresh), httponly=True, secure=True, samesite='None', max_age=86400 * 7)
+            response.set_cookie(
+                'refresh_token',
+                str(refresh),
+                httponly=True,
+                secure=True,
+                samesite='None',
+                max_age=86400 * 7
+            )
 
             return response
-        else:
-            return Response({"error": "Invalid Email or Password"}, status=status.HTTP_401_UNAUTHORIZED)
-        
+
+        return Response({"error": "Invalid Email or Password"}, status=401)
 
 class CookieTokenRefreshView(APIView):
     permission_classes = [AllowAny]
+
     def post(self, request):
-        # Cookie-il ninnu refresh token edukkunnu
         refresh_token = request.COOKIES.get('refresh_token')
 
         if not refresh_token:
-            return Response({"error": "Refresh token not found"}, status=status.HTTP_401_UNAUTHORIZED)
+            return Response({"error": "No refresh token"}, status=401)
 
         try:
-            # Token verify cheyyunnu
             refresh = RefreshToken(refresh_token)
-            
-            # Puthiya access token undakkunnu
             new_access_token = str(refresh.access_token)
 
-            response = Response({"message": "Token refreshed successfully"}, status=status.HTTP_200_OK)
-            
-            # Puthiya access token veendum cookie aayi set cheyyunnu
+            response = Response({"message": "Refreshed"})
+
+            # ✅ Cookie FIX
             response.set_cookie(
-                key='access_token', 
-                value=new_access_token, 
-                httponly=True, 
-                secure=True, 
-                samesite='None', 
+                'access_token',
+                new_access_token,
+                httponly=True,
+                secure=True,
+                samesite='None',
                 max_age=3600
             )
 
             return response
 
-        except TokenError as e:
-            return Response({"error": "Invalid or expired refresh token"}, status=status.HTTP_401_UNAUTHORIZED)
+        except TokenError:
+            return Response({"error": "Invalid refresh"}, status=401)
 
 
 class LogoutView(APIView):
+
     def post(self, request):
-        response = Response({"message": "Logged out successfully"}, status=status.HTTP_200_OK)
-        # Delete cheyyumbolum samesite='None' kodukkanam, illengil browser delete cheyyilla
+        response = Response({"message": "Logged out"})
+
+        # ✅ Cookie FIX
         response.delete_cookie('access_token', samesite='None')
         response.delete_cookie('refresh_token', samesite='None')
+
         return response
