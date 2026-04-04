@@ -42,6 +42,14 @@ class ReplyMessageView(APIView):
 
     def post(self, request, pk):
         message = get_object_or_404(Message, pk=pk)
+        
+        # ✅ PUTHAA CHECK: Already reply ayachittundengil block cheyyum!
+        if message.is_replied:
+            return Response(
+                {"error": "This message has already been replied to."}, 
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
         reply_text = request.data.get('reply_text')
 
         if not reply_text:
@@ -51,11 +59,10 @@ class ReplyMessageView(APIView):
         email_from = settings.EMAIL_HOST_USER
         recipient_list = [message.email]
         
-        # --- SIMPLE PLAIN TEXT EMAIL (NO STYLES) ---
+        # --- SIMPLE PLAIN TEXT EMAIL ---
         text_content = f"Hi {message.name},\n\n{reply_text}\n\nBest Regards,\nTeam ViceVersa"
 
         try:
-            # HTML message kalanju, simple text mathram ayakkunnu
             send_mail(
                 subject=subject, 
                 message=text_content, 
@@ -64,11 +71,10 @@ class ReplyMessageView(APIView):
                 fail_silently=False
             )
             
-            # Database update
             message.reply_message = reply_text
             message.replied_at = timezone.now() 
             message.is_replied = True
-            message.is_read = True # Reply ayakkumbolum read aakum
+            message.is_read = True 
             message.save()
             
             return Response({"message": "Reply sent successfully!"}, status=status.HTTP_200_OK)
