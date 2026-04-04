@@ -2,6 +2,7 @@ from rest_framework import generics, status
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework.pagination import PageNumberPagination # ✅ 1. Puthiya Import
 from django.shortcuts import get_object_or_404
 from django.core.mail import send_mail
 from django.conf import settings
@@ -10,6 +11,18 @@ from django.utils.html import strip_tags
 
 from .models import Message
 from .serializers import MessageSerializer
+
+# ==========================================
+# ✅ 2. Custom Pagination Class
+# ==========================================
+class MessagePagination(PageNumberPagination):
+    page_size = 20  # Oru page-il ethra messages venam ennu ivide theerumanikkam
+    page_size_query_param = 'page_size'
+    max_page_size = 500
+
+# ==========================================
+# VIEWS
+# ==========================================
 
 class ContactMessageCreateView(generics.CreateAPIView):
     queryset = Message.objects.all()
@@ -21,6 +34,7 @@ class AdminMessageListView(generics.ListCreateAPIView):
     queryset = Message.objects.all().order_by('-created_at')
     serializer_class = MessageSerializer
     permission_classes = [IsAuthenticated]
+    pagination_class = MessagePagination # ✅ 3. Pagination ivide connect cheythu!
 
 # 3. Admin Dashboard - View/Delete a single message
 class AdminMessageDetailView(generics.RetrieveUpdateDestroyAPIView):
@@ -28,7 +42,7 @@ class AdminMessageDetailView(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = MessageSerializer
     permission_classes = [IsAuthenticated]
 
-    # ✅ IVIDE AANU 'CLICK' LOGIC: Message open aakumbol read status update aakum
+    # ✅ 'CLICK' LOGIC: Message open aakumbol read status update aakum
     def get_object(self):
         obj = super().get_object()
         if not obj.is_read:
@@ -43,7 +57,7 @@ class ReplyMessageView(APIView):
     def post(self, request, pk):
         message = get_object_or_404(Message, pk=pk)
         
-        # ✅ PUTHAA CHECK: Already reply ayachittundengil block cheyyum!
+        # ✅ Already reply ayachittundengil block cheyyum!
         if message.is_replied:
             return Response(
                 {"error": "This message has already been replied to."}, 
