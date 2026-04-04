@@ -6,7 +6,6 @@ from google.auth.transport import requests as google_requests
 from django.contrib.auth.models import User
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.exceptions import InvalidToken, TokenError
-import jwt
 from django.conf import settings
 from django.contrib.auth import authenticate
 
@@ -41,8 +40,9 @@ class GoogleLoginView(APIView):
             
             response = Response(response_data, status=status.HTTP_200_OK)
             
-            response.set_cookie(key='access_token', value=str(refresh.access_token), httponly=True, secure=False, samesite='Lax', max_age=3600)
-            response.set_cookie(key='refresh_token', value=str(refresh), httponly=True, secure=False, samesite='Lax', max_age=86400 * 7)
+            # samesite='None' & secure=True is MUST for cross-origin cookies
+            response.set_cookie(key='access_token', value=str(refresh.access_token), httponly=True, secure=True, samesite='None', max_age=3600)
+            response.set_cookie(key='refresh_token', value=str(refresh), httponly=True, secure=True, samesite='None', max_age=86400 * 7)
             
             return response
             
@@ -75,8 +75,9 @@ class StandardLoginView(APIView):
 
             response = Response(response_data, status=status.HTTP_200_OK)
 
-            response.set_cookie(key='access_token', value=str(refresh.access_token), httponly=True, secure=True, samesite='Lax', max_age=3600)
-            response.set_cookie(key='refresh_token', value=str(refresh), httponly=True, secure=True, samesite='Lax', max_age=86400 * 7)
+            # samesite='None' & secure=True
+            response.set_cookie(key='access_token', value=str(refresh.access_token), httponly=True, secure=True, samesite='None', max_age=3600)
+            response.set_cookie(key='refresh_token', value=str(refresh), httponly=True, secure=True, samesite='None', max_age=86400 * 7)
 
             return response
         else:
@@ -101,13 +102,12 @@ class CookieTokenRefreshView(APIView):
             response = Response({"message": "Token refreshed successfully"}, status=status.HTTP_200_OK)
             
             # Puthiya access token veendum cookie aayi set cheyyunnu
-            is_production = not settings.DEBUG
             response.set_cookie(
                 key='access_token', 
                 value=new_access_token, 
                 httponly=True, 
-                secure=is_production, 
-                samesite='Lax', 
+                secure=True, 
+                samesite='None', 
                 max_age=3600
             )
 
@@ -120,6 +120,7 @@ class CookieTokenRefreshView(APIView):
 class LogoutView(APIView):
     def post(self, request):
         response = Response({"message": "Logged out successfully"}, status=status.HTTP_200_OK)
-        response.delete_cookie('access_token')
-        response.delete_cookie('refresh_token')
+        # Delete cheyyumbolum samesite='None' kodukkanam, illengil browser delete cheyyilla
+        response.delete_cookie('access_token', samesite='None')
+        response.delete_cookie('refresh_token', samesite='None')
         return response

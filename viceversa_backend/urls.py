@@ -23,5 +23,6 @@ urlpatterns = [
     # Login app-ile URLs ivide connect cheyyunnu
     path('api/auth/', include('login.urls')), 
     path('api/contacts/', include('contacts.urls')),
-    path('api/projects/', include('projects.urls'))
+    path('api/projects/', include('projects.urls')),
+    path('api/clients/', include('clients.urls')),
 ]

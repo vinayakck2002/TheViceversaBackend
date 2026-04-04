@@ -56,7 +56,8 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt',
     'login',
     'contacts',
-    'projects'
+    'projects',
+    'clients',
 
 ]
 
@@ -148,7 +149,7 @@ MEDIA_ROOT = BASE_DIR / 'media'
 # CORS Settings for React Frontend
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",
-    "http://127.0.0.1:5173 ",
+    "http://127.0.0.1:5173",
     "https://theviceversa.netlify.app",
 
 ]
@@ -165,6 +166,7 @@ CORS_ALLOW_CREDENTIALS = True
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
+        'login.authenticate.CookieJWTAuthentication',
     )
 }
 
