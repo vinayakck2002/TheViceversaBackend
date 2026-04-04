@@ -8,8 +8,10 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.exceptions import InvalidToken, TokenError
 from django.conf import settings
 from django.contrib.auth import authenticate
+from rest_framework.permissions import AllowAny
 
 class GoogleLoginView(APIView):
+    permission_classes = [AllowAny]
     def post(self, request):
         token = request.data.get('token')
         
@@ -51,6 +53,7 @@ class GoogleLoginView(APIView):
 
 
 class StandardLoginView(APIView):
+    permission_classes = [AllowAny]
     def post(self, request):
         email = request.data.get('email')
         password = request.data.get('password')
