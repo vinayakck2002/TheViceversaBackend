@@ -7,6 +7,7 @@ class Project(models.Model):
     image = models.ImageField(upload_to='projects_images/')
     
     created_at = models.DateTimeField(auto_now_add=True)
-
+    is_published = models.BooleanField(default=True)
+    show_on_home = models.BooleanField(default=False)
     def __str__(self):
         return self.name

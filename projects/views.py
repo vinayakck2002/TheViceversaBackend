@@ -1,35 +1,57 @@
 from rest_framework import generics
 from rest_framework.permissions import AllowAny, IsAuthenticated
-from rest_framework.pagination import PageNumberPagination # ✅ 1. Puthiya Import
+from rest_framework.pagination import PageNumberPagination
 from .models import Project
 from .serializers import ProjectSerializer
 
 # ==========================================
-# ✅ 2. Custom Pagination Class (12 items per page)
+# ✅ 1. PAGINATION CLASSES (3 tharam)
 # ==========================================
-class ProjectPagination(PageNumberPagination):
-    page_size = 12  # Oru page-il 12 projects varum
-    page_size_query_param = 'page_size'
-    max_page_size = 50
+class HomeProjectPagination(PageNumberPagination):
+    page_size = 4  # Home page-il 4 projects
+
+class PublicProjectPagination(PageNumberPagination):
+    page_size = 12  # Website projects page-il 12 projects
+
+class AdminProjectPagination(PageNumberPagination):
+    page_size = 20  # Admin dashboard-il 20 projects
 
 # ==========================================
-# VIEWS
+# ✅ 2. PUBLIC VIEWS (Website-nu vendi)
 # ==========================================
 
-# 1. Public Website-il Projects List Cheyyan (Aarkkum kanam)
-class ProjectListView(generics.ListAPIView):
-    queryset = Project.objects.all().order_by('-created_at')
+# Home Page (Published AND show_on_home=True aaya 4 items mathram)
+class HomeProjectListView(generics.ListAPIView):
+    queryset = Project.objects.filter(is_published=True, show_on_home=True).order_by('-created_at')
     serializer_class = ProjectSerializer
     permission_classes = [AllowAny]
-    pagination_class = ProjectPagination # ✅ 3. Pagination ivide connect cheythu!
+    pagination_class = HomeProjectPagination 
 
-# 2. Admin Dashboard - Puthiya Project Add Cheyyan
+# Projects Page (Published aaya 12 items mathram)
+class ProjectListView(generics.ListAPIView):
+    queryset = Project.objects.filter(is_published=True).order_by('-created_at')
+    serializer_class = ProjectSerializer
+    permission_classes = [AllowAny]
+    pagination_class = PublicProjectPagination 
+
+# ==========================================
+# ✅ 3. ADMIN VIEWS (Dashboard-nu vendi)
+# ==========================================
+
+# Admin List (Ellam kanikkan - Drafts + Published)
+class AdminProjectListView(generics.ListAPIView):
+    queryset = Project.objects.all().order_by('-created_at')
+    serializer_class = ProjectSerializer
+    permission_classes = [IsAuthenticated]
+    pagination_class = AdminProjectPagination
+
+# Admin - Puthiya Project Add Cheyyan
 class ProjectCreateView(generics.CreateAPIView):
     queryset = Project.objects.all()
     serializer_class = ProjectSerializer
     permission_classes = [IsAuthenticated]
 
-# 3. Admin Dashboard - Project Edit/Delete Cheyyan
+# Admin - Project Edit/Delete Cheyyan
 class ProjectDetailView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Project.objects.all()
     serializer_class = ProjectSerializer
