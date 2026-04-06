@@ -47,7 +47,8 @@ class ClientListCreateView(generics.ListCreateAPIView):
         status = self.request.query_params.get('status')
         has_called = self.request.query_params.get('has_called')
         remarks = self.request.query_params.get('remarks')
-        follow_up_date = self.request.query_params.get('follow_up_date') # Date aayi thedan
+        follow_up_date = self.request.query_params.get('follow_up_date') 
+        category_id = self.request.query_params.get('category') # ✅ PUTHIYA CATEGORY FILTER VARIABLE
 
         # ✅ FILTER LOGIC
         if status:
@@ -63,6 +64,9 @@ class ClientListCreateView(generics.ListCreateAPIView):
         if follow_up_date:
             # Frontend ninnu 'YYYY-MM-DD' format-il varumbol athu vechu filter cheyyan
             queryset = queryset.filter(follow_up_datetime__date=follow_up_date)
+            
+        if category_id: # ✅ CATEGORY FILTER CONDITION (Ithum koodi puthiyathayi add cheythu)
+            queryset = queryset.filter(category_id=category_id)
             
         return queryset
 
