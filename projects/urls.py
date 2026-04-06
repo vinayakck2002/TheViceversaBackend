@@ -15,7 +15,7 @@ urlpatterns = [
     path('userlist/', HomeProjectListView.as_view(), name='project-home'),
     
     # 2. Main projects page (12 items) -> /api/projects/
-    path('all', ProjectListView.as_view(), name='project-list'),
+    path('all/', ProjectListView.as_view(), name='project-list'),
 
     # ==========================
     # Admin URLs (Dashboard)
