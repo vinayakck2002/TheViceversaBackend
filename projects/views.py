@@ -1,8 +1,9 @@
-from rest_framework import generics
+from rest_framework import generics, filters
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.pagination import PageNumberPagination
 from .models import Project
 from .serializers import ProjectSerializer
+
 
 # ==========================================
 # ✅ 1. PAGINATION CLASSES (3 tharam)
@@ -44,6 +45,8 @@ class AdminProjectListView(generics.ListAPIView):
     serializer_class = ProjectSerializer
     permission_classes = [IsAuthenticated]
     pagination_class = AdminProjectPagination
+    filter_backends = [filters.SearchFilter]
+    search_fields = ['name']
 
 # Admin - Puthiya Project Add Cheyyan
 class ProjectCreateView(generics.CreateAPIView):
