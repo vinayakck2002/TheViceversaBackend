@@ -87,3 +87,20 @@ class ClientDetailView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Client.objects.all()
     serializer_class = ClientSerializer
     permission_classes = [IsAuthenticated]
+
+    # ✅ EDIT CHEYYUMBOL ULLA DUPLICATE CHECK
+    def perform_update(self, serializer):
+        phone_number = self.request.data.get('phone_number')
+        company_name = self.request.data.get('company_name')
+        
+        # Nammal ippo edit cheyyunna aalude ID (Ayalude thanne number aane block aavaruthallo)
+        current_client_id = self.get_object().id
+
+        # Puthiya number vere aarkkenkilum undonnu check cheyyunnu
+        if phone_number and Client.objects.filter(phone_number=phone_number).exclude(id=current_client_id).exists():
+            raise ValidationError({"phone_number": "Already  this phone number exists in the database!"})
+
+        if company_name and Client.objects.filter(company_name=company_name).exclude(id=current_client_id).exists():
+            raise ValidationError({"company_name": "Already  this company name exists in the database!"})
+
+        serializer.save()
