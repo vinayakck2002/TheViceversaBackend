@@ -1,6 +1,7 @@
-from rest_framework import generics, filters # ✅ filters import cheythu
+from rest_framework import generics, filters
 from rest_framework.permissions import IsAuthenticated
-from rest_framework.pagination import PageNumberPagination # ✅ Pagination import cheythu
+from rest_framework.pagination import PageNumberPagination
+from rest_framework.exceptions import ValidationError # ✅ Validation error kaanikkan
 from .models import Category, Client
 from .serializers import CategorySerializer, ClientSerializer
 
@@ -33,24 +34,21 @@ class CategoryDetailView(generics.RetrieveUpdateDestroyAPIView):
 class ClientListCreateView(generics.ListCreateAPIView):
     serializer_class = ClientSerializer
     permission_classes = [IsAuthenticated]
-    pagination_class = ClientPagination # ✅ Pagination connect cheythu
+    pagination_class = ClientPagination
 
     # ✅ SEARCH SETUP
     filter_backends = [filters.SearchFilter]
-    search_fields = ['owner_name', 'company_name', 'phone_number', 'location'] # Ee 4 fields vechu thedam
+    search_fields = ['owner_name', 'company_name', 'phone_number', 'location']
 
     def get_queryset(self):
-        # Aadyam ella clients-neyum edukkunnu
         queryset = Client.objects.all().order_by('-created_at')
         
-        # Frontend-il ninnu varunna filter parameters edukkunnu
         status = self.request.query_params.get('status')
         has_called = self.request.query_params.get('has_called')
         remarks = self.request.query_params.get('remarks')
         follow_up_date = self.request.query_params.get('follow_up_date') 
-        category_id = self.request.query_params.get('category') # ✅ PUTHIYA CATEGORY FILTER VARIABLE
+        category_id = self.request.query_params.get('category')
 
-        # ✅ FILTER LOGIC
         if status:
             queryset = queryset.filter(status=status)
             
@@ -59,16 +57,30 @@ class ClientListCreateView(generics.ListCreateAPIView):
             queryset = queryset.filter(has_called=has_called_bool)
             
         if remarks:
-            queryset = queryset.filter(remarks__icontains=remarks) # Remarks-il aa vakkundengil edukkum
+            queryset = queryset.filter(remarks__icontains=remarks)
             
         if follow_up_date:
-            # Frontend ninnu 'YYYY-MM-DD' format-il varumbol athu vechu filter cheyyan
             queryset = queryset.filter(follow_up_datetime__date=follow_up_date)
             
-        if category_id: # ✅ CATEGORY FILTER CONDITION (Ithum koodi puthiyathayi add cheythu)
+        if category_id:
             queryset = queryset.filter(category_id=category_id)
             
         return queryset
+
+    # ✅ DUPLICATE CHECK LOGIC (Number & Company Name)
+    def perform_create(self, serializer):
+        phone_number = self.request.data.get('phone_number')
+        company_name = self.request.data.get('company_name')
+
+        # Phone number check
+        if Client.objects.filter(phone_number=phone_number).exists():
+            raise ValidationError({"phone_number": "Already  this phone number exists in the database!"})
+
+        # Company name check
+        if Client.objects.filter(company_name=company_name).exists():
+            raise ValidationError({"company_name": "Already  this company name exists in the database!"})
+
+        serializer.save()
 
 # Call vilichu kazhinju Status update cheyyanum, Edit/Delete cheyyanum
 class ClientDetailView(generics.RetrieveUpdateDestroyAPIView):
