@@ -23,7 +23,7 @@ class Client(models.Model):
     phone_number = models.CharField(max_length=20)
     location = models.CharField(max_length=255)
     category = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True, related_name='clients')
-
+    note = models.TextField(null=True, blank=True)
     has_called = models.BooleanField(default=False) # Call button amarthi 'Yes' kodukkumbol ithu True aakum
     status = models.CharField(max_length=50, choices=STATUS_CHOICES, default='Pending')
     remarks = models.TextField(blank=True, null=True)
