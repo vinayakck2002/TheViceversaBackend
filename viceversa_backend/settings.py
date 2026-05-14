@@ -159,6 +159,8 @@ CORS_ALLOWED_ORIGINS = [
 CSRF_TRUSTED_ORIGINS = [
     "https://thecrm.netlify.app",
     "https://businesscrm.pythonanywhere.com",
+    "http://localhost:5173",
+    "http://127.0.0.1:5173",
 ]
 
 # Cookie frontend-lekku pass aakan ithu True aakanam
