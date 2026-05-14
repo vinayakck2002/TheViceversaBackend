@@ -38,8 +38,7 @@ SECRET_KEY = 'django-insecure-t%%u4qvl7y=nmg6h9!*ku4_0wpy*z!7ypazb$vi@m93m5--1+w
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['viceversa.pythonanywhere.com', '127.0.0.1', 'localhost']
-
+ALLOWED_HOSTS = ['businesscrm.pythonanywhere.com', 'localhost', '127.0.0.1']
 
 # Application definition
 
@@ -153,13 +152,13 @@ SIMPLE_JWT = {
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",
     "http://127.0.0.1:5173",
-    "https://theviceversa.netlify.app",
+    "https://thecrm.netlify.app",
 
 ]
 # CSRF errors varathirikkan ithum koodi add cheyyam
 CSRF_TRUSTED_ORIGINS = [
-    "https://theviceversa.netlify.app",
-    "https://viceversa.pythonanywhere.com",
+    "https://thecrm.netlify.app",
+    "https://businesscrm.pythonanywhere.com",
 ]
 
 # Cookie frontend-lekku pass aakan ithu True aakanam
