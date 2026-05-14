@@ -38,7 +38,7 @@ class ClientListCreateView(generics.ListCreateAPIView):
 
     # ✅ SEARCH SETUP
     filter_backends = [filters.SearchFilter]
-    search_fields = ['owner_name', 'company_name', 'phone_number', 'location']
+    search_fields = ['owner_name', 'company_name', 'phone_number', 'location','note']
 
     def get_queryset(self):
         queryset = Client.objects.all().order_by('-created_at')
