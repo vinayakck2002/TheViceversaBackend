@@ -28,7 +28,8 @@ class Client(models.Model):
     status = models.CharField(max_length=50, choices=STATUS_CHOICES, default='Pending')
     remarks = models.TextField(blank=True, null=True)
     follow_up_datetime = models.DateTimeField(blank=True, null=True) # Follow up later anengil Date & Time save cheyyan
-
+    is_deleted = models.BooleanField(default=False)
+    deleted_at = models.DateTimeField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

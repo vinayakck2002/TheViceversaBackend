@@ -9,6 +9,7 @@ from rest_framework_simplejwt.exceptions import InvalidToken, TokenError
 from django.conf import settings
 from django.contrib.auth import authenticate
 from rest_framework.permissions import AllowAny
+from django.conf import settings # Ithu file-nte ettavum mukalil illengil add cheyyuka
 
 class GoogleLoginView(APIView):
     permission_classes = [AllowAny]
@@ -92,6 +93,7 @@ class StandardLoginView(APIView):
             )
 
             return response
+
 
         return Response({"error": "Invalid Email or Password"}, status=401)
 
