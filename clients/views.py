@@ -46,7 +46,7 @@ class ClientListCreateView(generics.ListCreateAPIView):
 
     def get_queryset(self):
         # ✅ PUTHIYA MAATTAM 1: is_deleted=False aaya clients-ne mathram edukkunnu
-        queryset = Client.objects.filter(is_deleted=False).order_by('-created_at')
+        queryset = Client.objects.filter(is_deleted=False).order_by('created_at')
         
         status = self.request.query_params.get('status')
         has_called = self.request.query_params.get('has_called')
