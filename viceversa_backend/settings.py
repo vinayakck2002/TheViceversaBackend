@@ -182,3 +182,10 @@ EMAIL_USE_TLS = True
 EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER')
 EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD')
 ALLOWED_ADMIN_EMAIL = os.environ.get('ALLOWED_ADMIN_EMAIL')
+
+
+# 4. Cross-Domain Cookie Settings (Ithu illengil browser cookie set aakkilla!)
+SESSION_COOKIE_SAMESITE = 'None'
+SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_SAMESITE = 'None'
+CSRF_COOKIE_SECURE = True
